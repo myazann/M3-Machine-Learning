@@ -1,1 +1,1 @@
-# M3
+# M3 - Machine Learning for Computer Vision
