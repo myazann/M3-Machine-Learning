@@ -6,10 +6,13 @@ from keras.preprocessing.image import ImageDataGenerator
 
 #user defined variables
 PATCH_SIZE  = 64
-BATCH_SIZE  = 16
-DATASET_DIR = '/home/mcv/datasets/MIT_split'
-PATCHES_DIR = '/home/grupoXX/work/data/MIT_split_patches'
-MODEL_FNAME = '/home/grupoXX/work/patch_based_mlp.h5'
+BATCH_SIZE  = 128
+#DATASET_DIR = '/home/mcv/datasets/MIT_split'
+#PATCHES_DIR = '/home/grupoXX/work/data/MIT_split_patches'
+#MODEL_FNAME = '/home/grupoXX/work/patch_based_mlp.h5'
+DATASET_DIR = 'MIT_split'
+PATCHES_DIR = 'MIT_split_patches'
+MODEL_FNAME = 'patch_based_mlp.h5'
 
 def build_mlp(input_size=PATCH_SIZE,phase='TRAIN'):
   model = Sequential()
@@ -78,7 +81,7 @@ if not os.path.exists(MODEL_FNAME):
   model.fit_generator(
           train_generator,
           steps_per_epoch=18810 // BATCH_SIZE,
-          epochs=150,
+          epochs=50,
           validation_data=validation_generator,
           validation_steps=8070 // BATCH_SIZE)
   
@@ -114,7 +117,7 @@ for class_dir in os.listdir(directory):
     cls = classes[class_dir]
     for imname in os.listdir(os.path.join(directory,class_dir)):
       im = Image.open(os.path.join(directory,class_dir,imname))
-      patches = image.extract_patches_2d(np.array(im), (PATCH_SIZE, PATCH_SIZE), max_patches=1.0)
+      patches = image.extract_patches_2d(np.array(im), (PATCH_SIZE, PATCH_SIZE), max_patches=16)
       out = model.predict(patches/255.)
       predicted_cls = np.argmax( softmax(np.mean(out,axis=0)) )
       if predicted_cls == cls:
