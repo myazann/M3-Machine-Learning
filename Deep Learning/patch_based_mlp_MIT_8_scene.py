@@ -14,6 +14,7 @@ DATASET_DIR = 'MIT_split'
 PATCHES_DIR = 'MIT_split_patches'
 MODEL_FNAME = 'patch_based_mlp.h5'
 
+
 def build_mlp(input_size=PATCH_SIZE,phase='TRAIN'):
   model = Sequential()
   model.add(Reshape((input_size*input_size*3,),input_shape=(input_size, input_size, 3)))

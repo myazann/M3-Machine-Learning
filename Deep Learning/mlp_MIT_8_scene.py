@@ -15,8 +15,9 @@ import numpy as np
 import cv2
 
 #user defined variables
-IMG_SIZE    = 32
+IMG_SIZE    = 256
 BATCH_SIZE  = 16
+
 #DATASET_DIR = '/home/mcv/datasets/MIT_split'
 #MODEL_FNAME = '/home/group01/work/my_first_mlp.h5'
 DATASET_DIR = 'MIT_split'
@@ -31,9 +32,10 @@ print('Building MLP model...\n')
 
 #Build the Multi Layer Perceptron model
 model = Sequential()
-model.add(Reshape((IMG_SIZE*IMG_SIZE*3,),input_shape=(IMG_SIZE, IMG_SIZE, 3),name='first'))
+model.add(Reshape((IMG_SIZE*IMG_SIZE*3,), input_shape=(IMG_SIZE, IMG_SIZE, 3), name='first'))
 model.add(Dense(units=2048, activation='relu',name='second'))
-#model.add(Dense(units=1024, activation='relu'))
+model.add(Dense(units=1024, activation='relu', name='third'))
+model.add(Dense(units=512, activation='relu', name='fourth'))
 model.add(Dense(units=8, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy',
