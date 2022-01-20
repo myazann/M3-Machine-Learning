@@ -23,6 +23,9 @@ BATCH_SIZE  = 16
 DATASET_DIR = 'MIT_split'
 MODEL_FNAME = 'my_first_mlp_50_epochs.h5'
 
+import tensorflow as tf
+print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+
 if not os.path.exists(DATASET_DIR):
   print(Color.RED, 'ERROR: dataset directory '+DATASET_DIR+' do not exists!\n')
   quit()
