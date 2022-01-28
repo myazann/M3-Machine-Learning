@@ -9,7 +9,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras import backend as K
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import TensorBoard, CSVLogger
+from tensorflow.keras.callbacks import TensorBoard, CSVLogger, EarlyStopping
 from tensorflow.keras import optimizers 
 import matplotlib.pyplot as plt
 import os, datetime
@@ -26,7 +26,7 @@ for elem in os.listdir(val_data_dir):
 img_width = 256
 img_height=256
 batch_size=32
-number_of_epoch=50
+number_of_epoch=100
 validation_samples=val_len
 
 def preprocess_input(x, dim_ordering='default'):
@@ -94,9 +94,9 @@ lr_schedule = optimizers.schedules.ExponentialDecay(
 optimizer = optimizers.Adam(learning_rate=lr_schedule)
 """
 
-#csv_logger = CSVLogger('training.log')
+csv_logger = CSVLogger('vanilla_finetuning.csv')
+early_stop = EarlyStopping(monitor="val_loss", patience=10)
 
-model = Model(inputs=base_model.input, outputs=x)
 for layer in model.layers:
     layer.trainable = True
 	
@@ -108,10 +108,11 @@ tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
 
 history=model.fit_generator(train_generator,
       steps_per_epoch=(int(400//batch_size)+1),
-      epochs=50,
+      epochs=number_of_epoch,
       validation_data=validation_generator,
-      validation_steps= (int(validation_samples//batch_size)+1), callbacks=[tensorboard_callback])
+      validation_steps= (int(validation_samples//batch_size)+1), callbacks=[tensorboard_callback, csv_logger, early_stop])
 
 result = model.evaluate_generator(test_generator)
+print("Test results:", result)
 
-model.save("Finetuned_Model.h5")
+model.save("vanilla_finetuned.h5")
