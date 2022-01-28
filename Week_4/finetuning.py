@@ -97,7 +97,7 @@ optimizer = optimizers.Adam(learning_rate=lr_schedule)
 #csv_logger = CSVLogger('training.log')
 
 model = Model(inputs=base_model.input, outputs=x)
-for layer in base_model.layers:
+for layer in model.layers:
     layer.trainable = True
 	
 model.compile(loss='categorical_crossentropy', optimizer=optimizers.SGD(learning_rate=0.005, momentum=0.9, nesterov=True),
