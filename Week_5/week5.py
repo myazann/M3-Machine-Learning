@@ -1,7 +1,7 @@
 from numpy import number
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Flatten, Reshape, BatchNormalization, Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Flatten, Reshape, BatchNormalization, Conv2D, MaxPooling2D, LeakyReLU
 from tensorflow.python.keras.layers.core import Dropout
 from tensorflow.keras.models import load_model
 import tensorflow as tf
@@ -65,14 +65,14 @@ model = Sequential()
 model.add(Conv2D(64, (5, 5), activation="relu", input_shape=(img_width, img_height, 3)))
 model.add(Conv2D(32, (5, 5), activation="relu", input_shape=(img_width, img_height, 3)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dense(units=2048, activation='leaky_relu'))
-model.add(Dense(units=1024, activation='leaky_relu'))
+model.add(Dense(units=2048, activation='relu'))
+model.add(Dense(units=1024, activation='relu'))
 model.add(BatchNormalization())
 model.add(Dropout(rate=0.2))
-model.add(Dense(units=1024, activation='leaky_relu'))
+model.add(Dense(units=1024, activation='relu'))
 model.add(Conv2D(32, (3, 3), activation="relu"))
 model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dense(units=512, activation='leaky_relu'))
+model.add(Dense(units=512, activation='relu'))
 model.add(Dense(units=512, activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Flatten())
