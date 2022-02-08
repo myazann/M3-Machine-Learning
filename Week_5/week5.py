@@ -14,13 +14,6 @@ import matplotlib.pyplot as plt
 import os, datetime
 import pandas as pd
 
-"""
-gpus = tf.config.experimental.list_physical_devices('GPU')
-for gpu in gpus:
-  tf.config.experimental.set_memory_growth(gpu, True)
-"""
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-tf.test.gpu_device_name()
 
 train_data_dir='datasets/MIT_small_train_1/train'
 val_data_dir='datasets/MIT_small_train_1/test'
@@ -77,18 +70,15 @@ model.add(Dense(units=1024, activation='leaky_relu'))
 model.add(BatchNormalization())
 model.add(Dropout(rate=0.2))
 model.add(Dense(units=1024, activation='leaky_relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
-model.add(Dense(units=512, activation='leaky_relu'))
-model.add(Dense(units=512, activation='relu'))
 model.add(Conv2D(32, (3, 3), activation="relu"))
 model.add(MaxPooling2D(pool_size=(2, 2)))
-
+model.add(Dense(units=512, activation='leaky_relu'))
+model.add(Dense(units=512, activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Flatten())
 model.add(Dense(units=128, activation='relu'))
 model.add(BatchNormalization())
 model.add(Dropout(rate=0.2))
-model.add(Dense(units=64, activation='relu'))
 model.add(Dense(units=32, activation='relu'))
 model.add(Dense(units=8, activation='softmax'))
 
