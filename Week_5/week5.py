@@ -1,7 +1,7 @@
 from numpy import number
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Flatten, Reshape, BatchNormalization
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Flatten, Reshape, BatchNormalization, Conv2D, MaxPooling2D
 from tensorflow.python.keras.layers.core import Dropout
 from tensorflow.keras.models import load_model
 import tensorflow as tf
@@ -30,10 +30,10 @@ val_len = 0
 for elem in os.listdir(val_data_dir):
  val_len += len(os.listdir(os.path.join(val_data_dir, elem)))
 
-img_width = 128
-img_height = 128
-batch_size = 32
-number_of_epoch = 20
+img_width = 256
+img_height = 256
+batch_size = 64
+number_of_epoch = 50
 validation_samples = val_len
 
 def preprocess_input(x, dim_ordering='default'):
@@ -57,17 +57,39 @@ def preprocess_input(x, dim_ordering='default'):
         x[:, :, 2] -= 123.68
     return x
 
+"""
+Flatten
+Dense layers to help learn
+BatchNormalization (speeds up learning)
+Dropout (to prevent overfitting, they turn down some nodes)
+Conv2D (applies kernel on the image)
+MaxPooling2d (downsides the spatial dimensions)
+"""
+
 # create model
 model = Sequential()
-model.add(Reshape((img_width*img_height*3,), input_shape=(img_width, img_height, 3)))
+# model.add(Reshape((img_width,img_height,3), input_shape=(img_width, img_height, 3)))
+model.add(Conv2D(64, (5, 5), activation="relu", input_shape=(img_width, img_height, 3)))
+model.add(Conv2D(32, (5, 5), activation="relu", input_shape=(img_width, img_height, 3)))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dense(units=2048, activation='leaky_relu'))
+model.add(Dense(units=1024, activation='leaky_relu'))
 model.add(BatchNormalization())
+model.add(Dropout(rate=0.2))
+model.add(Dense(units=1024, activation='leaky_relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
-# model.add(Dense(units=2048, activation='relu'))
-model.add(Dense(units=1024, activation='relu'))
-model.add(Dense(units=1024, activation='relu'))
+model.add(Dense(units=512, activation='leaky_relu'))
 model.add(Dense(units=512, activation='relu'))
+model.add(Conv2D(32, (3, 3), activation="relu"))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Dense(units=512, activation='relu'))
+model.add(Flatten())
+model.add(Dense(units=128, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dropout(rate=0.2))
+model.add(Dense(units=64, activation='relu'))
+model.add(Dense(units=32, activation='relu'))
 model.add(Dense(units=8, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy',
@@ -79,7 +101,7 @@ plot_model(model, to_file='./model.png', show_shapes=True, show_layer_names=True
 
 print('Done!\n')
 
-# exit()
+exit()
 
 # get data
 datagen = ImageDataGenerator(featurewise_center=False,
